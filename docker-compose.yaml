@@ -1,7 +1,6 @@
 services:
   app:
-    image: ghcr.io/metatool-ai/metamcp:latest
-    pull_policy: always
+    image: ghcr.io/metatool-ai/metamcp:2.4.22
     env_file:
       - .env
     ports:

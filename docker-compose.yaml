@@ -24,14 +24,14 @@ services:
       - uv_cache:/home/nextjs/.cache/uv
 
   postgres:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-metamcp_db}
       POSTGRES_USER: ${POSTGRES_USER:-metamcp_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-m3t4mcp}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-metamcp_user} -d ${POSTGRES_DB:-metamcp_db}"]
       interval: 10s

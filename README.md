@@ -19,5 +19,9 @@ docker compose up -d
 Deployed with `docker_compose_location` set to `/docker-compose.coolify.yaml`. That variant
 does not bundle Postgres — it expects a `postgresql` service reachable on the `coolify`
 network (see the `postgresql` repo) with a `metamcp` database and dedicated user already
-created. `POSTGRES_USER`/`POSTGRES_PASSWORD`/`BETTER_AUTH_SECRET` are set as Coolify
-environment variables, not committed here.
+created. `POSTGRES_USER`/`POSTGRES_PASSWORD`/`BETTER_AUTH_SECRET`/`APP_URL` are all set as
+Coolify environment variables, not committed here — all four are required with no default,
+so a missing one fails the deploy loudly rather than silently booting misconfigured.
+`APP_URL` specifically must be the real domain for whichever tenant is deploying this repo
+(e.g. `https://mcp.jdmnt.co`) — never hardcode a domain into `docker-compose.coolify.yaml`
+itself, that would defeat the point of this being a reusable, tenant-agnostic repo.

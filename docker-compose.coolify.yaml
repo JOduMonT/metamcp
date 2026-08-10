@@ -9,8 +9,10 @@ services:
     pull_policy: always
     env_file:
       - .env
-    ports:
-      - "12008:12008"
+    # No `ports:` mapping on purpose. Publishing 12008 on the host would expose
+    # the app in plaintext on the server's public IP, bypassing Traefik, TLS and
+    # Cloudflare. Traefik reaches the container over the `coolify` network and
+    # auto-selects the image's single EXPOSEd port (12008).
     environment:
       POSTGRES_HOST: postgresql
       POSTGRES_PORT: 5432

@@ -23,5 +23,5 @@ created. `POSTGRES_USER`/`POSTGRES_PASSWORD`/`BETTER_AUTH_SECRET`/`APP_URL` are 
 Coolify environment variables, not committed here — all four are required with no default,
 so a missing one fails the deploy loudly rather than silently booting misconfigured.
 `APP_URL` specifically must be the real domain for whichever tenant is deploying this repo
-(e.g. `https://mcp.jdmnt.co`) — never hardcode a domain into `docker-compose.coolify.yaml`
+(e.g. `https://sub.domain.tld`) — never hardcode a domain into `docker-compose.coolify.yaml`
 itself, that would defeat the point of this being a reusable, tenant-agnostic repo.

@@ -1,0 +1,36 @@
+# Deployed by Coolify as this repo's docker_compose_location. Unlike docker-compose.yaml,
+# this does NOT bundle its own Postgres — it connects to this tenant's shared `postgresql`
+# instance (see the postgresql repo) using a dedicated `metamcp` database inside it. Joins
+# the `coolify` external network for both Traefik routing and to reach `postgresql` by
+# service name.
+services:
+  app:
+    image: ghcr.io/metatool-ai/metamcp:latest
+    pull_policy: always
+    env_file:
+      - .env
+    ports:
+      - "12008:12008"
+    environment:
+      POSTGRES_HOST: postgresql
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER must be set}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
+      POSTGRES_DB: metamcp
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresql:5432/metamcp
+      APP_URL: https://mcp.jdmnt.co
+      NEXT_PUBLIC_APP_URL: https://mcp.jdmnt.co
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET must be set}
+      TRANSFORM_LOCALHOST_TO_DOCKER_INTERNAL: "true"
+    restart: unless-stopped
+    volumes:
+      - uv_cache:/home/nextjs/.cache/uv
+    networks:
+      - coolify
+
+volumes:
+  uv_cache:
+
+networks:
+  coolify:
+    external: true

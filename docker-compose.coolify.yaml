@@ -28,6 +28,31 @@ services:
       - uv_cache:/home/nextjs/.cache/uv
     networks:
       - coolify
+    # Security hardening (OWASP Docker Security Cheat Sheet), validated against a fully
+    # isolated test copy (own throwaway Postgres, real signup/DB write confirmed working)
+    # before landing on this live, real-user instance:
+    # - cap_drop: ALL — the image already runs as a non-root user (nextjs) by its own
+    #   Dockerfile USER directive and needs no special Linux capabilities.
+    # - No read_only here, deliberately: this app writes to multiple package-manager caches
+    #   at runtime (pnpm's store under /home/nextjs/.local, not just the declared uv_cache
+    #   volume) as part of dynamically installing MCP servers — the exact write surface
+    #   depends on which MCP servers a user configures, which isn't fully enumerable ahead
+    #   of time. Getting read_only wrong here risks breaking a live user's workflow, so it's
+    #   skipped rather than guessed at.
+    # - No healthcheck override: the image already bakes one in
+    #   (curl -f http://localhost:12008/health), confirmed via `docker inspect`.
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    cpus: 2.0
+    pids_limit: 512
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   uv_cache:
